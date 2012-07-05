@@ -36,5 +36,5 @@ cdef class TermGenerator:
     property description:
         def __get__(self):
             as_bytes = <char *>self._this.get_description().c_str()
-            return as_bytes
-            #return as_bytes.decode('utf-8')
+            #return as_bytes
+            return as_bytes.decode('utf-8')
