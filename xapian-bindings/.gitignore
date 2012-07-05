@@ -24,3 +24,9 @@
 /xapian-bindings-*.tar.gz
 /xapian-bindings.spec
 /xapian-version.h
+
+__pycache__/
+*~
+*.pyc
+*.cpp
+build/
