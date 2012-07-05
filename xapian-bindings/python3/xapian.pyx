@@ -22,3 +22,19 @@ cdef class _Xapian:
 
 
 Xapian = _Xapian()
+
+
+cdef class TermGenerator:
+    cdef xapianlib.TermGenerator * _this
+
+    def __cinit__(self):
+        self._this = new xapianlib.TermGenerator()
+
+    def __dealloc__(self):
+        del self._this
+
+    property description:
+        def __get__(self):
+            as_bytes = <char *>self._this.get_description().c_str()
+            #return as_bytes, as_bytes.decode('utf-8')
+            return as_bytes.decode('utf-8')
