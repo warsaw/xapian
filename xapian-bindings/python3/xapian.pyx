@@ -141,3 +141,21 @@ cdef class TermGenerator:
 
     def __str__(self):
         return self.description
+
+
+cdef class QueryParser:
+    cdef xapianlib.QueryParser * _this
+
+    def __cinit__(self):
+        self._this = new xapianlib.QueryParser()
+
+    def __dealloc__(self):
+        del self._this
+
+    property description:
+        def __get__(self):
+            descr = self._this.get_description()
+            return descr.c_str()[:descr.size()].decode('utf-8')
+
+    def __str__(self):
+        return self.description

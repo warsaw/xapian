@@ -16,7 +16,6 @@ cdef extern from "xapian.h" namespace "Xapian":
     enum: DB_OPEN
 
     cdef cppclass Document:
-        # Make a new empty Document
         Document()
         string get_description()
 
@@ -33,4 +32,8 @@ cdef extern from "xapian.h" namespace "Xapian":
     cdef cppclass TermGenerator:
         # Default constructor.
         TermGenerator()
+        string get_description()
+
+    cdef cppclass QueryParser:
+        QueryParser()
         string get_description()
