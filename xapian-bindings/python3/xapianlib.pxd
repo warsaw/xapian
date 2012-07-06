@@ -13,6 +13,11 @@ cdef extern from "xapian.h" namespace "Xapian":
         Document()
         string get_description()
 
+    cdef cppclass Database:
+        Database()
+        Database(string path)
+        string get_description()
+
     cdef cppclass TermGenerator:
         # Default constructor.
         TermGenerator()
