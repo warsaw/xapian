@@ -154,6 +154,10 @@ cdef class TermGenerator:
     def __str__(self):
         return self.description
 
+    def set_stemmer(self, Stem stemmer):
+        cdef xapianlib.Stem * xstem = <xapianlib.Stem *>(stemmer._this)
+        self._this.set_stemmer(xstem[0])
+
 
 cdef class WritableDatabase(Database):
     cdef _open(self, path,

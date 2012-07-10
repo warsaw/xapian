@@ -37,6 +37,7 @@ cdef extern from "xapian.h" namespace "Xapian":
     cdef cppclass TermGenerator:
         TermGenerator()
         string get_description()
+        void set_stemmer(Stem& stemmer)
 
     cdef cppclass WritableDatabase(Database):
         WritableDatabase()
