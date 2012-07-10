@@ -24,16 +24,15 @@ cdef extern from "xapian.h" namespace "Xapian":
         Database(string path)
         string get_description()
 
-    cdef cppclass WritableDatabase:
+    cdef cppclass WritableDatabase(Database):
         WritableDatabase()
         WritableDatabase(string path, int action)
-        string get_description()
 
     cdef cppclass TermGenerator:
-        # Default constructor.
         TermGenerator()
         string get_description()
 
     cdef cppclass QueryParser:
         QueryParser()
         string get_description()
+        void set_database(Database& db)

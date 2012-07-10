@@ -2,6 +2,7 @@
 
 cimport xapianlib
 
+from cython.operator import dereference as deref
 from libcpp.string cimport string
 
 
@@ -93,16 +94,7 @@ cdef class Database:
         return self.description
 
 
-cdef class WritableDatabase:
-    cdef xapianlib.WritableDatabase * _this
-
-    def __cinit__(self):
-        self._this = NULL
-
-    def __dealloc__(self):
-        if self._this != NULL:
-            del self._this
-
+cdef class WritableDatabase(Database):
     cdef _open(self, path,
                action=xapianlib.DB_CREATE_OR_OPEN) except +raise_dbopenerror:
         if isinstance(path, str):
@@ -115,14 +107,6 @@ cdef class WritableDatabase:
             self._this = new xapianlib.WritableDatabase()
         else:
             self._open(path)
-
-    property description:
-        def __get__(self):
-            descr = self._this.get_description()
-            return descr.c_str()[:descr.size()].decode('utf-8')
-
-    def __str__(self):
-        return self.description
 
 
 cdef class TermGenerator:
@@ -159,3 +143,8 @@ cdef class QueryParser:
 
     def __str__(self):
         return self.description
+
+    def set_database(self, Database db):
+        cdef xapianlib.Database * xdb = <xapianlib.Database *>(db._this)
+        # Cython for .set_database(*xdb)
+        self._this.set_database(xdb[0])
