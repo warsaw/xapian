@@ -15,24 +15,29 @@ cdef extern from "xapian.h" namespace "Xapian":
     enum: DB_CREATE_OR_OVERWRITE
     enum: DB_OPEN
 
-    cdef cppclass Document:
-        Document()
-        string get_description()
-
     cdef cppclass Database:
         Database()
         Database(string path)
         string get_description()
 
-    cdef cppclass WritableDatabase(Database):
-        WritableDatabase()
-        WritableDatabase(string path, int action)
-
-    cdef cppclass TermGenerator:
-        TermGenerator()
+    cdef cppclass Document:
+        Document()
         string get_description()
 
     cdef cppclass QueryParser:
         QueryParser()
         string get_description()
         void set_database(Database& db)
+
+    cdef cppclass Stem:
+        Stem()
+        Stem(string& language)
+        string get_description()
+
+    cdef cppclass TermGenerator:
+        TermGenerator()
+        string get_description()
+
+    cdef cppclass WritableDatabase(Database):
+        WritableDatabase()
+        WritableDatabase(string path, int action)
