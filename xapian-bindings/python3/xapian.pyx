@@ -191,6 +191,17 @@ cdef class TermGenerator:
                 document._this)
             self._this.set_document(xdoc[0])
 
+    property termpos:
+        def __get__(self):
+            cdef xapianlib.termcount position = self._this.get_termpos()
+            return position
+
+        def __set__(self, termpos):
+            self._this.set_termpos(termpos)
+
+    def increase_termpos(self, delta=100):
+        self._this.increase_termpos(delta)
+
 
 cdef class WritableDatabase(Database):
     cdef _open(self, path,

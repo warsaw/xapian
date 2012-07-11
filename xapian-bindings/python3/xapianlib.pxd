@@ -3,6 +3,7 @@
 from libcpp.string cimport string
 
 ctypedef unsigned docid
+ctypedef unsigned termcount
 
 cdef int raise_py_error()
 
@@ -47,6 +48,10 @@ cdef extern from "xapian.h" namespace "Xapian":
         void set_stemmer(Stem& stemmer)
         void set_document(Document& document)
         Document& get_document()
+        termcount get_termpos()
+        void set_termpos(termcount termpos)
+        void increase_termpos(termcount delta)
+        void index_text(string& text, termcount wdf_inc, string& prefix)
 
     cdef cppclass WritableDatabase(Database):
         WritableDatabase()

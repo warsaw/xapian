@@ -50,3 +50,11 @@ class TestTermGenerator(unittest.TestCase):
         doc.data = b'document'
         tg.document = doc
         self.assertEqual(tg.document.data, b'document')
+
+    def test_termpos(self):
+        tg = TermGenerator()
+        self.assertEqual(tg.termpos, 0)
+        tg.termpos = 400
+        self.assertEqual(tg.termpos, 400)
+        tg.increase_termpos(100)
+        self.assertEqual(tg.termpos, 500)
