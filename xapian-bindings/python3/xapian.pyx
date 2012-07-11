@@ -202,6 +202,19 @@ cdef class TermGenerator:
     def increase_termpos(self, delta=100):
         self._this.increase_termpos(delta)
 
+    def index_text(self, text, wdf_inc=1, prefix=None):
+        # Cython does not support keyword or star-star arguments in cdef
+        # functions, so match the above defaults to the defaults in Xapian's
+        # TermGenerator.index_text() method (well, one of them, anyway).
+        cdef string xprefix
+        if prefix is not None:
+            if isinstance(prefix, str):
+                prefix = prefix.encode('utf-8')
+            xprefix = <string>(<char*>prefix)
+        if isinstance(text, str):
+            text = text.encode('utf-8')
+        self._this.index_text(<string>(<char*>text), wdf_inc, xprefix)
+
 
 cdef class WritableDatabase(Database):
     cdef _open(self, path,

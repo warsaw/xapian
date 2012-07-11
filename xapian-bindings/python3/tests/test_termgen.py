@@ -58,3 +58,69 @@ class TestTermGenerator(unittest.TestCase):
         self.assertEqual(tg.termpos, 400)
         tg.increase_termpos(100)
         self.assertEqual(tg.termpos, 500)
+
+    def test_index(self):
+        tg = TermGenerator()
+        tg.document = Document()
+        self.assertEqual(tg.termpos, 0)
+        tg.index_text('hello')
+        self.assertEqual(tg.termpos, 1)
+        self.assertEqual(tg.description,
+                         'Xapian::TermGenerator('
+                         'stem=Xapian::Stem(none), '
+                         'doc=Document('
+                         # See? One term was added.
+                         'Xapian::Document::Internal(terms[1])), '
+                         'termpos=1)')
+        tg.index_text(b'world')
+        self.assertEqual(tg.termpos, 2)
+        self.assertEqual(tg.description,
+                         'Xapian::TermGenerator('
+                         'stem=Xapian::Stem(none), '
+                         'doc=Document('
+                         # See?  A second term was added.
+                         'Xapian::Document::Internal(terms[2])), '
+                         'termpos=2)')
+
+    def test_index_with_wdf_inc(self):
+        # Give something other than the default for wdf_inc argument.
+        tg = TermGenerator()
+        tg.document = Document()
+        # XXX AFAICT, there's no way to test the effects of increasing the
+        # wdf_inc, i.e. the term weighting factor.  This is *not* the same as
+        # the termcount.
+        self.assertEqual(tg.termpos, 0)
+        tg.index_text('hello', 10)
+        self.assertEqual(tg.termpos, 1)
+
+    def test_index_with_prefix(self):
+        tg = TermGenerator()
+        tg.document = Document()
+        self.assertEqual(tg.termpos, 0)
+        tg.index_text('hello', prefix='AA')
+        self.assertEqual(tg.termpos, 1)
+        self.assertEqual(tg.description,
+                         'Xapian::TermGenerator('
+                         'stem=Xapian::Stem(none), '
+                         'doc=Document('
+                         # See?  One term was added.
+                         'Xapian::Document::Internal(terms[1])), '
+                         'termpos=1)')
+        tg.index_text('hello', prefix=b'BB')
+        self.assertEqual(tg.termpos, 2)
+        self.assertEqual(tg.description,
+                         'Xapian::TermGenerator('
+                         'stem=Xapian::Stem(none), '
+                         'doc=Document('
+                         # See?  A second term was added.
+                         'Xapian::Document::Internal(terms[2])), '
+                         'termpos=2)')
+
+    def test_index_with_wdf_inc_and_prefix(self):
+        tg = TermGenerator()
+        tg.document = Document()
+        self.assertEqual(tg.termpos, 0)
+        tg.index_text('hello', 10, 'AA')
+        self.assertEqual(tg.termpos, 1)
+        tg.index_text('hello', 20, prefix=b'BB')
+        self.assertEqual(tg.termpos, 2)
