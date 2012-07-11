@@ -88,6 +88,9 @@ cdef class Document:
     def __str__(self):
         return self.description
 
+    def __len__(self):
+        return self._this.termlist_count()
+
     property description:
         def __get__(self):
             # XXX Use this instead of the obvious alternative one-liner
@@ -114,6 +117,11 @@ cdef class Document:
         def __set__(self, data):
             # data must be bytes.
             self._this.set_data(<string>(<char*>data))
+
+    def add_term(self, tname, wdfinc=1):
+        if isinstance(tname, str):
+            tname = tname.encode('utf-8')
+        self._this.add_term(<string>(<char*>tname), wdfinc)
 
 
 cdef class QueryParser:

@@ -31,6 +31,8 @@ cdef extern from "xapian.h" namespace "Xapian":
         string serialise()
         string get_data()
         void set_data(string& data)
+        termcount termlist_count()
+        void add_term(string& tname, termcount wdfinc)
 
     cdef cppclass QueryParser:
         QueryParser()

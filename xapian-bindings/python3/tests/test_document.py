@@ -21,3 +21,10 @@ class TestDocument(unittest.TestCase):
     def test_serialise(self):
         doc = Document()
         self.assertEqual(doc.serialise, b'')
+
+    def test_add_term(self):
+        doc = Document()
+        # termlist_count can be gotten via len()
+        self.assertEqual(len(doc), 0)
+        doc.add_term('hello')
+        self.assertEqual(len(doc), 1)
