@@ -1,7 +1,7 @@
 import unittest
 
 
-from xapian import Stem, TermGenerator
+from xapian import Document, Stem, TermGenerator
 
 
 class TestTermGenerator(unittest.TestCase):
@@ -24,3 +24,18 @@ class TestTermGenerator(unittest.TestCase):
                          'Xapian::TermGenerator(stem=Xapian::Stem(english), '
                          'doc=Document(Xapian::Document::Internal()), '
                          'termpos=0)')
+
+    def test_set_document(self):
+        tg = TermGenerator()
+        doc = Document()
+        tg.document = doc
+        self.assertEqual(tg.description,
+                         'Xapian::TermGenerator(stem=Xapian::Stem(none), '
+                         'doc=Document(Xapian::Document::Internal()), '
+                         'termpos=0)')
+
+    def test_get_document(self):
+        tg = TermGenerator()
+        doc = Document()
+        tg.document = doc
+        self.assertEqual(tg.document, doc)

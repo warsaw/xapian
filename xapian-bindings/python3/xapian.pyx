@@ -78,8 +78,34 @@ cdef class Document:
     def __cinit__(self):
         self._this = new xapianlib.Document()
 
+    cdef _pivot(self, xapianlib.Document * document):
+        del self._this
+        self._this = document
+
     def __dealloc__(self):
         del self._this
+
+    def __richcmp__(self, other, op):
+        cdef my_docid = self.docid
+        cdef your_docid = other.docid
+        # Do ordered comparisons by docid make sense?
+        if op == 0:
+            return my_docid < your_docid
+        elif op == 1:
+            return my_docid <= your_docid
+        elif op == 2:
+            return my_docid == your_docid
+        elif op == 3:
+            return my_docid != your_docid
+        elif op == 4:
+            return my_docid > your_docid
+        elif op == 5:
+            return my_docid >= your_docid
+        else:
+            raise RuntimeError('unexpected comparison operator: {}'.format(op))
+
+    def __str__(self):
+        return self.description
 
     property description:
         def __get__(self):
@@ -90,8 +116,9 @@ cdef class Document:
             descr = self._this.get_description()
             return descr.c_str()[:descr.size()].decode('utf-8')
 
-    def __str__(self):
-        return self.description
+    property docid:
+        def __get__(self):
+            return self._this.get_docid()
 
 
 cdef class QueryParser:
@@ -157,6 +184,23 @@ cdef class TermGenerator:
     def set_stemmer(self, Stem stemmer):
         cdef xapianlib.Stem * xstem = <xapianlib.Stem *>(stemmer._this)
         self._this.set_stemmer(xstem[0])
+
+    property document:
+        def __get__(self):
+            ## cdef xapianlib.TermGenerator * tg = <xapianlib.TermGenerator *>(
+            ##     self._this)
+            ## document = Document()
+            ## cdef xapianlib.Document& xdoc = tg.get_document()
+            ## document._this = &xdoc
+            ## return document
+            document = Document()
+            document._pivot(new xapianlib.Document(self._this.get_document()))
+            return document
+
+        def __set__(self, Document document):
+            cdef xapianlib.Document * xdoc = <xapianlib.Document *>(
+                document._this)
+            self._this.set_document(xdoc[0])
 
 
 cdef class WritableDatabase(Database):

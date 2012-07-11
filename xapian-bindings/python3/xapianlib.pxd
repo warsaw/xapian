@@ -2,6 +2,8 @@
 
 from libcpp.string cimport string
 
+ctypedef unsigned docid
+
 cdef int raise_py_error()
 
 cdef extern from "xapian.h" namespace "Xapian":
@@ -22,7 +24,9 @@ cdef extern from "xapian.h" namespace "Xapian":
 
     cdef cppclass Document:
         Document()
+        Document(Document& document)
         string get_description()
+        docid get_docid()
 
     cdef cppclass QueryParser:
         QueryParser()
@@ -38,6 +42,8 @@ cdef extern from "xapian.h" namespace "Xapian":
         TermGenerator()
         string get_description()
         void set_stemmer(Stem& stemmer)
+        void set_document(Document& document)
+        Document& get_document()
 
     cdef cppclass WritableDatabase(Database):
         WritableDatabase()
