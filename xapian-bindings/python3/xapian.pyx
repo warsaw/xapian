@@ -85,25 +85,6 @@ cdef class Document:
     def __dealloc__(self):
         del self._this
 
-    def __richcmp__(self, other, op):
-        cdef my_docid = self.docid
-        cdef your_docid = other.docid
-        # Do ordered comparisons by docid make sense?
-        if op == 0:
-            return my_docid < your_docid
-        elif op == 1:
-            return my_docid <= your_docid
-        elif op == 2:
-            return my_docid == your_docid
-        elif op == 3:
-            return my_docid != your_docid
-        elif op == 4:
-            return my_docid > your_docid
-        elif op == 5:
-            return my_docid >= your_docid
-        else:
-            raise RuntimeError('unexpected comparison operator: {}'.format(op))
-
     def __str__(self):
         return self.description
 
@@ -119,6 +100,20 @@ cdef class Document:
     property docid:
         def __get__(self):
             return self._this.get_docid()
+
+    property serialise:
+        def __get__(self):
+            cdef string representation = self._this.serialise()
+            return representation.c_str()
+
+    property data:
+        def __get__(self):
+            cdef string data = self._this.get_data()
+            return data.c_str()
+
+        def __set__(self, data):
+            # data must be bytes.
+            self._this.set_data(<string>(<char*>data))
 
 
 cdef class QueryParser:
@@ -187,12 +182,6 @@ cdef class TermGenerator:
 
     property document:
         def __get__(self):
-            ## cdef xapianlib.TermGenerator * tg = <xapianlib.TermGenerator *>(
-            ##     self._this)
-            ## document = Document()
-            ## cdef xapianlib.Document& xdoc = tg.get_document()
-            ## document._this = &xdoc
-            ## return document
             document = Document()
             document._pivot(new xapianlib.Document(self._this.get_document()))
             return document

@@ -27,6 +27,9 @@ cdef extern from "xapian.h" namespace "Xapian":
         Document(Document& document)
         string get_description()
         docid get_docid()
+        string serialise()
+        string get_data()
+        void set_data(string& data)
 
     cdef cppclass QueryParser:
         QueryParser()
