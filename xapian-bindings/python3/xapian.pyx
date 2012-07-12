@@ -3,6 +3,7 @@
 cimport xapianlib
 
 from cython.operator import dereference as deref
+from cython.operator import preincrement as preinc
 from libcpp.string cimport string
 
 
@@ -90,6 +91,9 @@ cdef class Document:
 
     def __len__(self):
         return self._this.termlist_count()
+
+    def __iter__(self):
+        return TermIterator(self)
 
     property description:
         def __get__(self):
@@ -222,6 +226,34 @@ cdef class TermGenerator:
         if isinstance(text, str):
             text = text.encode('utf-8')
         self._this.index_text(<string>(<char*>text), wdf_inc, xprefix)
+
+
+cdef class TermIterator:
+    cdef xapianlib.TermIterator * _here
+    cdef xapianlib.TermIterator * _end
+
+    def __cinit__(self, document):
+        cdef xapianlib.TermIterator& here = <xapianlib.TermIterator&>document._this.termlist_begin()
+        cdef xapianlib.TermIterator& end = <xapianlib.TermIterator&>document._this.termlist_end()
+        self._here = new xapianlib.TermIterator(here)
+        self._end = new xapianlib.TermIterator(end)
+
+    def __dealloc__(self):
+        del self._here
+        del self._end
+
+    property description:
+        def __get__(self):
+            descr = self._this.get_description()
+            return descr.c_str()[:descr.size()].decode('utf-8')
+
+    def __str__(self):
+        return self.description
+
+    def __next__(self):
+        if self._here == self._end:
+            raise StopIteration
+        preinc(self._here)
 
 
 cdef class WritableDatabase(Database):

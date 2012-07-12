@@ -28,3 +28,20 @@ class TestDocument(unittest.TestCase):
         self.assertEqual(len(doc), 0)
         doc.add_term('hello')
         self.assertEqual(len(doc), 1)
+
+    def test_iterator(self):
+        doc = Document()
+        doc.add_term('hello')
+        doc.add_term(b'world')
+        termiter = iter(doc)
+        for term in doc:
+            print(term)
+        self.assertEqual(termiter.description, '')
+        self.assertEqual(str(termiter), '')
+
+    def test_iteration_loop(self):
+        doc = Document()
+        doc.add_term('hello')
+        doc.add_term(b'world')
+        all_terms = [term.decode('utf-8') for term in doc]
+        self.assertListEqual(all_terms, ['hello', 'world'])

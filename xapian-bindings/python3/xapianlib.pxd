@@ -33,6 +33,8 @@ cdef extern from "xapian.h" namespace "Xapian":
         void set_data(string& data)
         termcount termlist_count()
         void add_term(string& tname, termcount wdfinc)
+        TermIterator& termlist_begin()
+        TermIterator& termlist_end()
 
     cdef cppclass QueryParser:
         QueryParser()
@@ -54,6 +56,13 @@ cdef extern from "xapian.h" namespace "Xapian":
         void set_termpos(termcount termpos)
         void increase_termpos(termcount delta)
         void index_text(string& text, termcount wdf_inc, string& prefix)
+
+    cdef cppclass TermIterator:
+        TermIterator()
+        TermIterator(TermIterator&)
+        string operator*()
+        TermIterator& operator++()
+        string get_description()
 
     cdef cppclass WritableDatabase(Database):
         WritableDatabase()
